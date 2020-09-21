@@ -89,7 +89,7 @@ public class Graph {
         for (int i = 1; i < vList.size() + 1; i++) {
             ArrayList<Vertex> neibs = vList.get(i - 1).getNeibs();
 
-            System.out.print("neibs = ");
+            System.out.print("neibs of # "+i+" = ");
             Iterator<Vertex> it = neibs.iterator();
 
             System.out.print("[");
@@ -101,11 +101,12 @@ public class Graph {
                 }
             }
 
-            System.out.print("]");
-
-            System.out.println();
+            System.out.println("]");
 
         }
+
+        System.out.println();
+        System.out.println();
     }
 
     private boolean vListEmptyCheck(){
@@ -138,119 +139,6 @@ public class Graph {
 
     }
 
-    /*public VertexList getVertexListByName( ArrayList<VertexList> vList, String name){
-        for(VertexList v: vList){
-            if(v.getName().equals(name)){
-                return v;
-            }
-        }
-        return null;
-    }
-
-    public void DFS(String name){
-        if(vListEmptyCheck()) return;
-
-        VertexList root = getVertexListByName(vList, name);
-        if(root == null){
-            showAlert("name "+ name +" not found.");
-            return;
-        }
-
-        DFS(root);
-
-
-
-    }
-
-    public void DFS(int idx){
-        if(vListEmptyCheck()) return;
-
-        if(idx > vList.size()){
-            showAlert("index " + idx + " doesn't exist.");
-            return;
-        }
-
-        DFS(vList.get(idx));
-
-    }*/
-
-    /*private void DFS(VertexList root){
-        ArrayList<String> result = getDFS(new ArrayList<String>(), root);
-
-        System.out.println("DFS result of # "+root.getName()+" : " + result.toString());
-    }
-
-    private ArrayList<String> getDFS(ArrayList<String> result, VertexList root){
-        if(result == null){
-            result = new ArrayList<>();
-        }
-
-
-        while(root != null){
-
-            if(!result.contains(root.getName())) {
-                result.add(root.getName());
-                if(result.size() == 1){
-                    result = getDFS(result, root);
-                }
-            }
-
-            System.out.println(result.toString());
-
-            root = getVertexListByName(vList, getNeibName(result, root));
-            result = getDFS(result, root);
-        }
-
-
-        return result;
-
-
-    }*/
-
-    /*private ArrayList<String> getBFS(ArrayList<String> result, VertexList root){
-        if(result == null){
-            result = new ArrayList<>();
-        }
-
-        while(root != null){
-
-            if(!result.contains(root.getName())) {
-                result.add(root.getName());
-                if(result.size() == 1){
-                    result = getDFS(result, root);
-                }
-            }
-
-            System.out.println(result.toString());
-
-            root = getVertexListByName(vList, getNeibName(result, root));
-            result = getDFS(result, root);
-        }
-
-
-        return result;
-
-
-    }*/
-
-    /*private String getNeibName(ArrayList<String> result, VertexList root){
-        ArrayList<Vertex> neibs = root.getNeibs();
-        for(int i=0;i<neibs.size();i++){
-            boolean exist = false;
-            for(String name : result){
-                if(name.equals(neibs.get(i).getName())){
-                    exist = true;
-                    break;
-                }
-            }
-            if(!exist)
-                return neibs.get(i).getName();
-        }
-
-        return null;
-
-    }*/
-
     public void BFS(int v){
         BFS(v+"");
     }
@@ -266,22 +154,23 @@ public class Graph {
             return;
         }
 
+        queue.add(v);
+
         do {
+            v=queue.poll();
             vIdx = Integer.parseInt(v)-1;
 
             result.add(v);
             visited[vIdx]=1;
-            System.out.println(vList.get(vIdx).getNeibs().toString());
+
             for(Vertex neib: vList.get(vIdx).getNeibs()){
                 if(visited[Integer.parseInt(neib.toString())-1]==0 && !queue.contains(neib.toString()))
                     queue.add(neib.toString());
             }
-            System.out.println("visited : " + Arrays.toString(visited) + ", Q : " + Arrays.toString(queue.toArray()) + ", Result : " + result.toString());
+            System.out.println("#" + v+" visited : " + Arrays.toString(visited) + ", Q : " + Arrays.toString(queue.toArray()) + ", Result : " + result.toString());
 
-            v=queue.poll();
         }while(queue.size()>0);
 
-        System.out.println();
         System.out.println("==============");
         System.out.println("BFS : "+result.toString());
         System.out.println();
@@ -289,9 +178,57 @@ public class Graph {
 
     }
 
+    public void DFS(int v){
+        DFS(v+"");
+    }
     public void DFS(String v){
         ArrayList<String> result = new ArrayList<>();
+        int [] visited = new int[vList.size()];
+        Arrays.fill(visited, 0);
+        Stack<String> stack = new Stack<>();
 
+        int vIdx = Integer.parseInt(v)-1;
+        if(vIdx>vList.size()){
+            showAlert("Index "+v+"doesn't exist.");
+            return;
+        }
+        stack.add(v);
+
+        do{
+
+            if(Arrays.stream(visited).allMatch(n->n==1)){
+                break;
+            }
+
+            v=stack.peek();
+            vIdx = Integer.parseInt(v)-1;
+
+            if(visited[vIdx]==0){
+                result.add(v);
+                visited[vIdx] = 1;
+            }
+
+            boolean stackAdded=false;
+            for(Vertex neib: vList.get(vIdx).getNeibs()){
+                if(visited[Integer.parseInt(neib.toString())-1]==0){
+
+                    stack.add(neib.toString());
+                    stackAdded = true;
+                    break;
+                }
+            }
+            System.out.println("#"+v+" visited : " + Arrays.toString(visited) + ", S : " + Arrays.toString(stack.toArray()) + ", Result : " + result.toString());
+
+            if(!stackAdded)
+                stack.pop();
+
+
+        }while (stack.size()>0);
+
+        System.out.println("==============");
+        System.out.println("DFS : "+result.toString());
+        System.out.println();
+        System.out.println();
     }
 
 
@@ -314,8 +251,13 @@ public class Graph {
 
         }
         graph.display();
+
+        graph.DFS("5");
+        graph.DFS(2);
+
         graph.BFS("5");
         graph.BFS(2);
+
     }
 
 }
