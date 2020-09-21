@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 public class VertexList {
     private String name;
-    private Vertex root;
+    //private Vertex root;
     private ArrayList<Vertex> neibs;
 
     public VertexList(String name){
         this.name = new String(name);
-        this.root = new Vertex(name);
+        //this.root = new Vertex(name);
     }
 
     @Override
@@ -25,11 +25,11 @@ public class VertexList {
         this.neibs = neibs;
     }
 
-    public Vertex getRoot() {
+    /*public Vertex getRoot() {
         return root;
     }
 
     public String getName() {
         return name;
-    }
+    }*/
 }
