@@ -12,6 +12,7 @@ import javax.swing.*;
 public class Graph {
 
     private ArrayList<VertexList> vList;      //= new ArrayList<VertexList>(vCount);
+    private boolean NEIBS_NUM_INCLUDED = true;
 
     public Graph() throws CancelException {
         int vCount = 0;
@@ -56,35 +57,55 @@ public class Graph {
             file+=".txt";
         }
 
-        System.out.println("filename : " + file);
-
         Scanner inFile = new Scanner(new FileReader(file));
 
-        int vCount = 0;
-        vCount = inFile.nextInt();
+        int vCount = inFile.nextInt();
         String trash = inFile.nextLine();
         vList = new ArrayList<VertexList>(vCount);
-        int i = 0;
 
-        for (i = 1; i < vCount + 1; i++) {
+        if(NEIBS_NUM_INCLUDED){
+            for (int i = 1; i < vCount + 1; i++) {
 
-            vList.add(i - 1, new VertexList("" + 1));
-            String neibslist = inFile.nextLine();
-            String[] neibsArray = neibslist.split(" ");
-            int[] neibsArray1 = new int[neibsArray.length];
+                vList.add(i - 1, new VertexList("" + i));
+                String neibslist = inFile.nextLine();
+                String[] neibsArray = neibslist.split(" ");
+                int[] neibsArray1 = new int[neibsArray.length-1];
 
-            for (int j = 0; j < neibsArray.length; j++) {
-                neibsArray1[j] = Integer.parseInt(neibsArray[j]);
+                for (int j = 1; j < neibsArray.length; j++) {
+                    neibsArray1[j-1] = Integer.parseInt(neibsArray[j]);
+                }
+
+                ArrayList<Vertex> neibs = new ArrayList<Vertex>(neibsArray.length-1);
+                for (int k = 0; k < neibsArray.length-1; k++) {
+                    int vertexNum = Integer.parseInt(neibsArray[k+1]);
+                    neibs.add(new Vertex("" + vertexNum));
+                }
+                vList.get(i - 1).setNeibs(neibs);
+
             }
+        }else{
+            for (int i = 1; i < vCount + 1; i++) {
 
-            ArrayList<Vertex> neibs = new ArrayList<Vertex>(neibsArray.length);
-            for (int k = 0; k < neibsArray.length; k++) {
-                int vertexNum = Integer.parseInt(neibsArray[k]);
-                neibs.add(new Vertex("" + vertexNum));
+                vList.add(i - 1, new VertexList("" + i));
+                String neibslist = inFile.nextLine();
+                String[] neibsArray = neibslist.split(" ");
+                int[] neibsArray1 = new int[neibsArray.length];
+
+                for (int j = 0; j < neibsArray.length; j++) {
+                    neibsArray1[j] = Integer.parseInt(neibsArray[j]);
+                }
+
+                ArrayList<Vertex> neibs = new ArrayList<Vertex>(neibsArray.length);
+                for (int k = 0; k < neibsArray.length; k++) {
+                    int vertexNum = Integer.parseInt(neibsArray[k]);
+                    neibs.add(new Vertex("" + vertexNum));
+                }
+                vList.get(i - 1).setNeibs(neibs);
+
             }
-            vList.get(i - 1).setNeibs(neibs);
-
         }
+
+
         inFile.close();
     }
 
