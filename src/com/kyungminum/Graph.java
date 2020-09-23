@@ -1,10 +1,9 @@
 package com.kyungminum;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 /**
  *
@@ -14,7 +13,7 @@ public class Graph {
 
     private ArrayList<VertexList> vList;      //= new ArrayList<VertexList>(vCount);
 
-    public Graph() {
+    public Graph() throws CancelException {
         int vCount = 0;
         vCount = readInteger("Number of Vertices", 1);
 
@@ -57,6 +56,8 @@ public class Graph {
             file+=".txt";
         }
 
+        System.out.println("filename : " + file);
+
         Scanner inFile = new Scanner(new FileReader(file));
 
         int vCount = 0;
@@ -90,28 +91,28 @@ public class Graph {
     public void display() {
 
         if(vListEmptyCheck()) return;
+        String message = "";
 
         for (int i = 1; i < vList.size() + 1; i++) {
             ArrayList<Vertex> neibs = vList.get(i - 1).getNeibs();
 
-            System.out.print("neibs of # "+i+" = ");
+            message+="neibs of # "+i+" = ";
             Iterator<Vertex> it = neibs.iterator();
 
-            System.out.print("[");
+            message+="[";
 
             while (it.hasNext()) {
-                System.out.print(it.next());
+                message+=it.next();
                 if (it.hasNext()) {
-                    System.out.print(", ");
+                    message+=", ";
                 }
             }
 
-            System.out.println("]");
+            message+="]\n";
 
         }
+        JOptionPane.showMessageDialog(null, message, "DFS result", JOptionPane.INFORMATION_MESSAGE);
 
-        System.out.println();
-        System.out.println();
     }
 
     private boolean vListEmptyCheck(){
@@ -122,16 +123,21 @@ public class Graph {
         return false;
     }
 
-    private void showAlert(String msg){
+    private static void showAlert(String msg){
         JOptionPane.showMessageDialog(null, msg);
     }
 
-    private int readInteger(String prompt, int min) {
+    private int readInteger(String prompt, int min) throws CancelException {
 
         int val = 0;
 
         do {
             String ans = JOptionPane.showInputDialog(null, prompt, "");
+
+            if(ans == null){
+                throw new CancelException();
+            }
+
 
             try {
                 val = Integer.parseInt(ans);
@@ -160,6 +166,7 @@ public class Graph {
         }
 
         queue.add(v);
+        String message = "";
 
         do {
             v=queue.poll();
@@ -172,14 +179,14 @@ public class Graph {
                 if(visited[Integer.parseInt(neib.toString())-1]==0 && !queue.contains(neib.toString()))
                     queue.add(neib.toString());
             }
-            System.out.println("#" + v+" visited : " + Arrays.toString(visited) + ", Q : " + Arrays.toString(queue.toArray()) + ", Result : " + result.toString());
+            message+="#" + v+" visited : " + Arrays.toString(visited) + ", Q : " + Arrays.toString(queue.toArray()) + ", Result : " + result.toString()+"\n";
 
         }while(queue.size()>0);
 
-        System.out.println("==============");
-        System.out.println("BFS : "+result.toString());
-        System.out.println();
-        System.out.println();
+
+        message+="====================\n";
+        message+="BFS : "+result.toString();
+        JOptionPane.showMessageDialog(null, message, "BFS result", JOptionPane.INFORMATION_MESSAGE);
 
     }
 
@@ -198,6 +205,8 @@ public class Graph {
             return;
         }
         stack.add(v);
+
+        String message = "";
 
         do{
 
@@ -222,7 +231,7 @@ public class Graph {
                     break;
                 }
             }
-            System.out.println("#"+v+" visited : " + Arrays.toString(visited) + ", S : " + Arrays.toString(stack.toArray()) + ", Result : " + result.toString());
+            message +="#"+v+" visited : " + Arrays.toString(visited) + ", S : " + Arrays.toString(stack.toArray()) + ", Result : " + result.toString()+"\n";
 
             if(!stackAdded)
                 stack.pop();
@@ -230,45 +239,85 @@ public class Graph {
 
         }while (stack.size()>0);
 
-        System.out.println("==============");
-        System.out.println("DFS : "+result.toString());
-        System.out.println();
-        System.out.println();
+        message+="====================\n";
+        message+="DFS : "+result.toString();
+        JOptionPane.showMessageDialog(null, message, "DFS result", JOptionPane.INFORMATION_MESSAGE);
+
     }
 
 
 
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
+        String[] buttons1 = {"QUIT", "file", "manual"};
+        String[] buttons2 = {"QUIT", "reset vertices", "BFS", "DFS", "display" };
         Graph graph = null;
-        System.out.println("Please input whether you would like to run from a file or input vertex's manually" + "\n" + "Press 1 for manual and"
-                + " 2 for file");
-        int choose = input.nextInt();
-        if (choose == 1) {
-            graph = new Graph();
-        } else if (choose == 2) {
-            try{
-                graph = new Graph("./src/graphfile.txt");//저장위치는 src바깥쪽임
-           }catch (FileNotFoundException e){
-                JOptionPane.showMessageDialog(null, "No such file or directory.");
-                return;
+        while (true){
+
+            if(graph == null){
+                int num = JOptionPane.showOptionDialog(null, "Please choose whether you would like to \nrun from a file or input vertex's manually","input vertices", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons1, null );
+
+                switch (num){
+                    case 0:
+                        return;
+
+                    case 1:
+                        String fname = JOptionPane.showInputDialog(null, "Please enter file name", "");
+
+                        if(fname == null || fname.length() == 0){
+                            showAlert("The file name is empty.");
+                            break;
+                        }
+
+                        try{
+                            graph = new Graph("./src/"+fname);//저장위치는 src바깥쪽임
+                        }catch (FileNotFoundException e){
+                            JOptionPane.showMessageDialog(null, "No such file or directory.");
+                            graph = null;
+                        }
+                        break;
+                    case 2:
+                        try {
+                            graph = new Graph();
+                        } catch (CancelException e) {
+                            graph = null;
+                        }
+                        break;
+                }
+            }else{
+                int num = JOptionPane.showOptionDialog(null, "Please choose your action","input vertices", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons2, null );
+
+                switch (num){
+                    case 4:
+                        graph.display();
+                        break;
+                    case 3:
+                        try {
+                            graph.DFS(graph.readInteger("[DFS] Please input first vertex", 1));
+                        } catch (CancelException e) {
+
+                        }
+
+                        break;
+                    case 2:
+                        try {
+                            graph.BFS(graph.readInteger("[DFS] Please input first vertex", 1));
+                        } catch (CancelException e) {
+
+                        }
+                        break;
+                    case 1:
+                        graph = null;
+                        break;
+                    case 0:
+                        return;
+                }
             }
 
         }
-
-
-        graph.display();
-
-        graph.DFS("5");
-        graph.DFS(2);
-
-        graph.BFS("5");
-        graph.BFS(2);
-
     }
 
 }
 
-// Make sure that a user enters the number of vertices
-// do...while repeates until a successful number entry
+class CancelException extends Exception{
 
+}
