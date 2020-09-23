@@ -261,7 +261,7 @@ public class Graph {
                         return;
 
                     case 1:
-                        String fname = JOptionPane.showInputDialog(null, "Please enter file name", "");
+                        String fname = JOptionPane.showInputDialog(null, "Please enter file name\nex. graphfile.txt", "");
 
                         if(fname == null || fname.length() == 0){
                             showAlert("The file name is empty.");
