@@ -1,5 +1,6 @@
 package com.kyungminum;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
@@ -52,7 +53,11 @@ public class Graph {
 
     public Graph(String file) throws FileNotFoundException {
 
-        Scanner inFile = new Scanner(new FileReader("graphfile.txt"));
+        if(!file.contains(".txt")){
+            file+=".txt";
+        }
+
+        Scanner inFile = new Scanner(new FileReader(file));
 
         int vCount = 0;
         vCount = inFile.nextInt();
@@ -243,13 +248,15 @@ public class Graph {
             graph = new Graph();
         } else if (choose == 2) {
             try{
-                graph = new Graph("file");
-            }catch (FileNotFoundException e){
+                graph = new Graph("./src/graphfile.txt");//저장위치는 src바깥쪽임
+           }catch (FileNotFoundException e){
                 JOptionPane.showMessageDialog(null, "No such file or directory.");
                 return;
             }
 
         }
+
+
         graph.display();
 
         graph.DFS("5");
