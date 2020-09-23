@@ -1,9 +1,12 @@
 package com.kyungminum;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 
 /**
  *
@@ -52,9 +55,6 @@ public class Graph {
 
     public Graph(String file) throws FileNotFoundException {
 
-        if(!file.contains(".txt")){
-            file+=".txt";
-        }
 
         System.out.println("filename : " + file);
 
@@ -261,15 +261,9 @@ public class Graph {
                         return;
 
                     case 1:
-                        String fname = JOptionPane.showInputDialog(null, "Please enter file name", "");
-
-                        if(fname == null || fname.length() == 0){
-                            showAlert("The file name is empty.");
-                            break;
-                        }
 
                         try{
-                            graph = new Graph("./src/"+fname);//저장위치는 src바깥쪽임
+                            graph = new Graph(JFileChooserUtil.jFileChooserUtil());//저장위치는 src바깥쪽임
                         }catch (FileNotFoundException e){
                             JOptionPane.showMessageDialog(null, "No such file or directory.");
                             graph = null;
