@@ -16,7 +16,10 @@ public class Graph {
 
     public Graph() throws CancelException {
         int vCount = 0;
-        vCount = readInteger("Number of Vertices", 1);
+        do{
+            vCount = readInteger("Number of Vertices", 1);
+        }while (vCount ==0);
+
 
         vList = new ArrayList<VertexList>(vCount);
 
@@ -27,7 +30,7 @@ public class Graph {
             int nCount;
             do{
                 nCount = readInteger("Number of neighbors for vertex # " + i, 0);
-            }while(nCount > vCount);
+            }while(nCount == 0 || nCount > vCount);
 
             ArrayList<Vertex> neibs = new ArrayList<Vertex>(nCount);
 
@@ -36,7 +39,10 @@ public class Graph {
                 boolean exists;
                 do{
                     exists = false;
-                    vertexNum = readInteger("Enter neighbor # " + (k+1) + " for vertex # " + i, 1);
+                    do{
+                        vertexNum = readInteger("Enter neighbor # " + (k+1) + " for vertex # " + i, 1);
+                    }while (vertexNum == 0);
+
                     for(Vertex v: neibs){
                         if(!exists && v.toString().equals(vertexNum+"")){
                             exists = true;
